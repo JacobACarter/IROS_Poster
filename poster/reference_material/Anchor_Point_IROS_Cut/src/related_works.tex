@@ -1,0 +1,24 @@
+
+\section{Related Work}
+\label{sec:related_works}
+
+\noindent \textbf{Rolling shutter correction.}
+Early single-frame approaches estimate camera motion from visual cues such as line geometry or motion blur \cite{BowsToArrows, Manhattan,MotionBlur}, while multi-frame methods rely on tracking or interpolation across image sequences to recover parametric motion models \cite{AnalysisAndCompensation, RemovingWobble,CFRS}.
+Recent learning-based methods address RS correction using paired RS-GS data \cite{DeepUnrollNet,RS-Diffusion}. Diffusion-based approaches have shown promise for single-frame RS correction \cite{RS-Diffusion}, but assume moderate distortions or rely on additional sensing such as IMU measurements. In contrast, our work focuses on large RS distortions without external sensor input, emphasizing the role of temporal reference selection in downstream depth estimation.
+
+\vspace{1mm}
+\noindent \textbf{Rolling shutter in robotics.}  
+Classical visual odometry (VO) and SLAM pipelines often assume global shutter imagery, leading to degraded pose and structure estimation under RS effects \cite{Hedborg2012,Meingast2005}. Continuous-time trajectory representations and rolling-shutter-aware bundle adjustment have been proposed to mitigate these effects \cite{mo2022imu,Furgale2012}, while minimal solvers for RS relative pose enable robust RANSAC-based geometry estimation \cite{Albl2015,Saurer2015}. In visual-inertial pipelines, models that explicitly account for RS readout improve pose and map accuracy under aggressive motion \cite{Leutenegger2015,Rosinol2020,Schubert2019}. This work complements these approaches by focusing on single-frame correction in large-distortion regimes, enabling downstream monocular depth estimation without inertial measurements.
+
+
+\vspace{1mm}
+\noindent \textbf{Rolling shutter datasets.}
+Progress in RS correction is closely tied to the availability of representative datasets. Existing datasets such as BS-RSCD \cite{RSCD}, Fastec-RS and Carla-RS \cite{DeepUnrollNet}, and Real-RS \cite{RS-Diffusion} primarily target mild-to-moderate distortions or rely on synthetic motion profiles. In this work, we introduce a new collocated RS-GS dataset designed to capture large RS distortions arising from realistic robotic motion, with explicit control over temporal alignment through anchor point selection (see Fig.~\ref{fig:flow_bar}). This enables systematic analysis of RS correction and depth estimation under extreme distortions.
+
+\vspace{1mm}
+\noindent \textbf{Rolling shutter correction and related imaging tasks.}
+RS correction is related to motion deblurring and computational photography techniques that exploit coded exposure or specialized sensing \cite{veeraraghavan2010coded, hitomi2011video, wang2015lisens}. Joint RS correction and motion deblurring has been explored \cite{zhong2021towards, seiskari2024gaussian}. In this work, we assume sharp images without motion blur, consistent with prior RS correction studies \cite{Manhattan, RS-Diffusion, DeepUnrollNet}, and focus on correcting geometric distortions. Unlike approaches that exploit RS artifacts for sensing or coding \cite{woo2012vrcodes, o2015homogeneous, wang2018programmable, sheinin2022dual}, our goal is to recover conventional geometry for downstream perception tasks.
+
+\vspace{1mm}
+\noindent \textbf{Monocular depth estimation under distortions.}
+Monocular depth estimation has seen significant advances through large-scale training and foundation models, including MiDaS~\cite{MIDAS}, DPT~\cite{DPT}, AdaBins~\cite{AdaBins}, Depth-Anything~\cite{DepthAnything}, UDepth~\cite{yu2022udepth}, and diffusion methods such as Marigold~\cite{Marigold}. While these models generalize well, they assume GS imagery and degrade due to RS distortions. Our work addresses monocular depth estimation by first correcting severe RS artifacts and analyzing how temporal alignment influences geometric consistency.

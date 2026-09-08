@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Anchor Points for RS Depth Estimation</title>
+    <meta
+      name="description"
+      content="Anchor Points for Monocular Depth Estimation Under Severe Rolling Shutter Ego-motion (IROS 2026) from the FOCUS Lab (UF)."
+    />
+  </head>
+  <body>
+    <div id="poster"></div>
+    <script type="module" lang="ts">
+      import { createApp } from "vue";
+      import Poster from "./poster/index.vue";
+      import "./poster/index.css";
+      const poster = document.createElement("div");
+      document.body.appendChild(poster);
+      createApp(Poster).mount(poster);
+    </script>
+  </body>
+</html>

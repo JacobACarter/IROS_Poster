@@ -1,0 +1,33 @@
+{
+  "name": "anchor-point-iros-poster",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Anchor Points for Monocular Depth Estimation Under Severe Rolling Shutter Ego-motion — A0 academic poster (reusable web page + print-exact)",
+  "scripts": {
+    "dev": "vite",
+    "check": "vue-tsc --noEmit",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "node scripts/export.mjs -o preview.png --dpi 96",
+    "serve": "vite preview",
+    "export": "node scripts/export.mjs"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.5",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/compiler-sfc": "^3.5.34",
+    "node-html-parser": "^7.1.0",
+    "puppeteer": "^25.0.4",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vue-tsc": "^2.2.0"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4",
+    "vue": "^3.5.13"
+  },
+  "allowScripts": {
+    "puppeteer@25.10.0": true,
+    "esbuild@0.25.12": true
+  }
+}

@@ -1,0 +1,283 @@
+
+\section{Anchor Point for Rolling Shutter Correction}
+\label{sec:Anchor_Point}
+Rolling-shutter (RS) cameras expose rows sequentially, producing geometric distortions that depend on motion and row index. Any RSC algorithm must therefore choose a reference time specifying which global shutter (GS) frame the algorithm is attempting to reconstruct. Despite its importance, prior work often selects this arbitrarily (e.g., the first row or midpoint). Below we provide a theoretical definition and analysis of this reference, which we call the \textit{anchor point}. Our analysis explains the importance of anchor point selection and derives why the midpoint $\frac{N}{2}$ is a strong default choice under mild motion assumptions. 
+
+% \vspace{1mm}
+% \noindent 
+% \textbf{Theoretical Summary:} 
+% Our analysis and experiments show the following about anchor-point selection:
+% \begin{enumerate}[label={Claim \arabic*}:,nolistsep,leftmargin=*]
+%     \item The optimal anchor point lies in a discrete set corresponding to the image rows.
+    
+%     \item For any rolling-shutter image, there exists a scene-dependent optimal anchor point that minimizes the total expected distortion.
+    
+%     \item Under mild symmetry assumptions on scene motion (e.g., zero-mean deviations about constant velocity), the distortion-minimizing anchor coincides with the temporal midpoint of the exposure,  $t_{\text{anch}} = \frac{N}{2}$.
+
+% \end{enumerate}
+
+\subsection{Our discrete rolling shutter model}
+Following \cite{Coded-RS}, the observed RS image can be modeled as an integration over exposure time T of the scene radiance $E$ weighted by the shutter function $S$:
+\begin{equation}
+    I(x, y) = \int_{0}^{T} E(x,y,t)\, S(x,y,t)\, dt. \label{eqn:eqn1}
+\end{equation} 
+We reinterpret each RS image as a discrete sampling from a hypothetical GS video recorded at the same rate as the row readout, so that row $y$ of RS image is sampled from frame $y$:
+\begin{equation}
+I(x, y) = G(x, y, y). \label{eqn:eqn2}
+\end{equation}
+{Thus, correcting RS distortion amounts to choosing a GS frame anchor point $t_{anch}$ and warping all rolling shutter rows toward that frame.}
+
+\subsection{Theoretical claims}
+
+\begin{claim}
+        \label{clm:1}
+        The optimal anchor point lies in a discrete set
+    \end{claim}
+    \begin{proof}[Proof Sketch of Claim \ref{clm:1}]
+        Each row is captured at integer time index $y$, so choosing 
+\begin{equation}
+    t_{anch} = k \in {\{1, ..., N\}}
+\end{equation}
+forces row $k$ to be perfectly aligned with its GS counterpart ($D_k(k) = 0$, where $D$ can be \textit{any} non-negative distortion metric). Non-integers do not provide this same property of perfect alignment. Under standard temporal smoothness assumptions, the expected distortion of other rows depends only on $|y-k|$, yielding
+\begin{equation}
+    \mathbb{E}[D_y(t)] = h(|y-t|),\qquad h(0)=0,\ h(u)>0\ \forall u>0.
+\end{equation}
+Thus the set of viable anchors is the set of row indices.
+\end{proof}%
+\vspace{-3mm}
+
+
+\begin{corollary}
+Because the feasible set contains only $N$ elements, the optimal solution can be obtained by a grid search over candidate anchors.
+\end{corollary}
+
+
+
+\begin{claim}[General Optimal Anchor]
+\label{clm:general_anchor_clean}
+For any rolling-shutter image, there exists an optimal global-shutter anchor point $t_{\text{anch}}^*$ that minimizes the total expected distortion.
+\end{claim}
+
+\begin{proof}[Proof Sketch of Claim \ref{clm:general_anchor_clean}]
+Let $X_n$ denote the horizontal position of a tracked structure in row $n$, and $X(t)$ be the GS reference position at anchor $t$. By defining a general distortion metric $D(t) = \sum_{n=1}^{N} | X_n - X(t) |$, we can write
+\begin{equation}
+   X_n = v n + \alpha_n, \qquad X(t) = v t,
+\end{equation}
+where $v$ is nominal linear motion and $\alpha_n$ encodes accelerations, biases, or asymmetries. Then
+\begin{equation}
+   D(t) = \sum_{n=1}^{N} | (v n - v t) + \alpha_n |.
+\end{equation}
+Minimizing $D(t)$ over $t \in \{1, \dots, N\}$ defines the general optimal anchor optimization pipeline as:
+\begin{equation}
+   t_{\text{anch}}^* = \arg\min_{t \in \{1, \dots, N\}} \sum_{n=1}^{N} | (v n - v t) + \alpha_n |.
+\end{equation}
+\end{proof}%
+\vspace{-3mm}
+
+
+\begin{claim}[]
+\label{clm:n/2}
+Under mild symmetry assumptions on scene motion (e.g., zero-mean deviations about constant velocity), the distortion-minimizing anchor coincides with the temporal midpoint of the exposure,  $t_{\text{anch}} = \frac{N}{2}$
+\end{claim}
+
+\begin{proof}[Proof Sketch of Claim \ref{clm:n/2}]
+For the derivation above, if the deviations satisfy $\mathbb{E}[\alpha_n] = 0$ for all $n$, then
+\begin{equation}
+   \mathbb{E}[D(t)] = \sum_{n=1}^{N} | v n - v t |,
+\end{equation}
+which is minimized by the median of $\{1,\dots,N\}$. For evenly spaced rows, this is the temporal midpoint $t_{\text{anch}}^* = \frac{N}{2}$.
+\end{proof}
+\begin{corollary}
+       The midpoint $\frac{N}{2}$ arises as a special-case solution under zero-mean, symmetric motion statistics.
+\end{corollary}
+
+These claims show that anchor-point selection is a fundamental factor in RS correction. Our method serves as a strong instantiation demonstrating these effects, while the dataset provides a controlled benchmark for systematic evaluation.
+
+\draft{\noindent\textbf{Assumptions and Limitations.}
+Claim 3 should be interpreted as a special-case result rather than a universal optimum. Under strongly asymmetric motion profiles, the scene-dependent optimum described in Claim 2 may deviate from the temporal midpoint. However, our experiments on the REAL dataset and legged robot platform indicate that the midpoint anchor remains a robust practical choice, likely because deviations average out across exposure intervals and image content.}
+
+\subsection{Anchor points as a method-agnostic improvement}
+Anchor-point selection is not specific to our pipeline, but is implicitly present in any RS correction method that maps a RS image to a single GS reference. We demonstrate with RS-Diffusion~\cite{RS-Diffusion}, whose output is anchored to the first row.
+
+Without retraining, we re-centered the predicted flow so that zero displacement occurs at the image midpoint rather than the top row, changing the anchor from $t_{\text{anch}}=0$ to $t_{\text{anch}}=\frac{N}{2}$. This simple post-processing step improves PSNR and SSIM (Fig.~\ref{fig:teaser_results}b), demonstrating that anchor-point selection is a first-order factor in RS correction. The broader significance is that anchor selection constitutes an overlooked degree of freedom shared by many RS correction methods.
+
+% It is important to note that the 
+% \textbf{anchor-point selection is not specific to our pipeline}, but is implicitly present in all RS correction methods that map an RS image to a single GS reference. To demonstrate this, we revisited RS-Diffusion~\cite{RS-Diffusion}, which predicts a dense flow field that maps each RS row to a GS image. In its original formulation, the predicted flow is implicitly anchored to the first row.
+
+% Without retraining or modifying the network, we re-centered the predicted flow so that the displacement is zero at the image midpoint rather than at the top row, effectively changing the anchor point from $t_{\text{anch}} = 0$ to $t_{\text{anch}} = \frac{N}{2}$. This simple post-processing step substantially improves reconstruction quality, seen in Fig. \ref{fig:teaser_results} (b) over PSNR and SSIM.
+
+% This result provides strong empirical evidence that anchor-point choice is a first-order factor in rolling shutter correction. \draft{The significance of anchor points is not that $\frac{N}{2}$ is always optimal, but that anchor-point selection itself is an overlooked degree of freedom present in virtually all RS correction methods.} Even state-of-the-art pretrained models benefit significantly from correct temporal alignment, highlighting anchor point selection as a paramount decision in dataset creation. 
+
+
+% \begin{claim}
+%         \label{clm:2}
+%         The optimal anchor point for a scene with symmetric motion and zero-mean acceleration is $\frac{N}{2}$
+%     \end{claim}
+%     \begin{proof}[Proof Sketch of Claim \ref{clm:2}]
+%        From above, for arbitrary motions and content distribution, the distortion minimizing anchor may lie anywhere within ${1, ..., N}$. Given a RS/GS pair $(I_i, G_i)$, the optimal anchor minimizes the worst case distortion:
+% \begin{equation}\label{eq:general_anchor}
+%     t_{\text{anch}}^* 
+%     = \arg\min_{t \in \{1,\dots,N\}} \max_{i \in S} 
+%     M\big(I_i(x,y),\, G_i(x,y,t)\big).
+% \end{equation}
+
+
+% For many datasets, especially those captured in driving or robotics contexts, we can make simplifying assumptions on motion statistics.  
+% Let $X_n$ denote the horizontal position of a tracked structure in row $n$, modeled as
+% \begin{equation}
+%     X_n \sim \mathcal{N}(\mu_n,\, \sigma^2).
+% \end{equation}
+% Let the GS position at anchor $t$ be $v \cdot t$.  
+% Then the expected distortion is
+% \begin{equation}
+%     \mathbb{E}[D(t)] 
+%     = \sum_{n=1}^{N} \mathbb{E}\big[| X_n - v t |\big]
+%     \approx \sum_{n=1}^{N} |\mu_n - v t|.
+% \end{equation}
+
+% If the dataset is \textbf{temporally centered on average}, meaning $\mu_n = v n$, then
+% \begin{equation}
+%     \mathbb{E}[D(t)] \approx \sum_{n=1}^{N} | v n - v t |,
+% \end{equation}
+% which is minimized at the median of $\{1,\dots,N\}$:
+% \begin{equation}
+%     t_{\text{anch}} = \frac{N}{2}.
+% \end{equation}
+% Thus the optimal anchor point under these conditions is $\frac{N}{2}$
+% \end{proof}
+
+% \noindent \emph{Extension to acceleration.}
+% If rows include zero-mean accelerations:
+% \begin{equation}
+%     X_n = v n + \tfrac{1}{2} a_n n^2,\qquad a_n \sim \mathcal{N}(0, \sigma_a^2),
+% \end{equation}
+% the expectation remains centered at $v n$, so the optimum anchor remains $\frac{N}{2}$. \\
+
+
+
+
+
+
+
+
+% \noindent \textbf{Toy example.} 
+%Consider a vertical bar moving horizontally at constant velocity $v$ during capture (Fig.~\ref{fig:rsdiagram}). Each RS row records the bar at a slightly different time, producing a slanted appearance. The distortion relative to a GS frame at $t_{\text{anch}}$ is:
+%\begin{equation}
+%    D = \int_{n=0}^{N} |v\, t_{\text{anch}} - v\, n|\, dn,
+%\end{equation}
+%where $n$ indexes rows and $N$ is the image height. Minimizing $D$ gives:
+%\begin{equation}
+%    t_{\text{anch}} = \frac{N}{2},
+%\end{equation}
+%i.e., the midpoint of the exposure, which intuitively minimizes the average spatial displacement.
+
+
+
+
+
+
+
+% Rolling shutter (RS) distortion arises because each row of the sensor is exposed at a different time, unlike a global shutter (GS) that captures all pixels simultaneously. Following \cite{Coded-RS}, the observed image $I(x,y)$ can be expressed as an integration over the exposure time $T$ of the scene radiance $E(x,y,t)$ weighted by the shutter function $S(x,y,t)$:
+% \begin{equation}
+%     I(x, y) = \int_{0}^{T} E(x,y,t)\, S(x,y,t)\, dt. \label{eqn:eqn1}
+% \end{equation} 
+
+% We reinterpret each RS image as a discrete sampling from a hypothetical GS video $G(x,y,t)$ recorded at the same rate as the row readout, so that row $x$ of the RS image is sampled from frame $x$:
+% \begin{equation}
+% I(x, y) = G(x, y, x). \label{eqn:eqn2}
+% \end{equation} 
+
+% The \emph{anchor point} $t_{\text{anch}}$ specifies which GS frame the de-rolling algorithm should correct to. While many prior methods \cite{Manhattan,RS-Diffusion,DeepUnrollNet} select this arbitrarily (e.g., first or middle row), we provide a systematic analysis showing that mid-exposure $t_{\text{anch}} = \frac{N}{2}$ minimizes average distortion, particularly in scenes with large RS effects.
+
+% \subsection{Optimal Anchor Point is a Discrete Set}
+
+% We model the distortion between an RS row $y$ and the GS frame at anchor time $t_{\text{anch}}$ as
+% \begin{equation}
+%     D_y(t_{\text{anch}}) = f\big(I[x,y],\; G[x,y,t_{\text{anch}}]\big),
+% \end{equation}
+% with $f$ being any nonnegative distortion measure (e.g., $L_1$, $L_2$, perceptual).  
+% Total distortion is
+% \begin{equation}
+%     D_{\mathrm{tot}}(t_{\text{anch}}) = \sum_{y=1}^{N} D_y(t_{\text{anch}}).
+% \end{equation}
+
+% A key property of rolling shutter sampling is that each row is captured at a discrete time index $y$.  
+% If we choose $t_{\text{anch}} = k \in \{1,\dots,N\}$, then the $k$th row is perfectly aligned:
+% \begin{equation}
+%     D_k(k) = 0.
+% \end{equation}
+% No non-integer anchor produces this property, and the distortion of every other row depends only on $|y-k|$ under standard temporal smoothness assumptions:
+% \begin{equation}
+%     \mathbb{E}[D_y(t)] = h(|y-t|),\qquad h(0)=0,\ h(u)>0\ \forall u>0.
+% \end{equation}
+% Thus integer anchors minimize expected distortion:
+% \begin{equation}
+%     \mathbb{E}[D_{\mathrm{tot}}(k)] \le \mathbb{E}[D_{\mathrm{tot}}(t)], \qquad \forall t \notin \mathbb{Z}.
+% \end{equation}
+
+
+% \subsection{Optimal Anchor Point for General Scenes}
+
+% For arbitrary scenes, motions, and content distributions, the optimal anchor point may be anywhere within the discrete set $\{1,\dots,N\}$.  
+% Let $M(\cdot,\cdot)$ be a generic misalignment metric between an RS image and a GS reference.  
+% Given training pairs $S=\{(I_i,G_i)\}$, the optimal anchor minimizes the worst-case distortion:
+% \begin{equation}\label{eq:general_anchor}
+%     t_{\text{anch}}^* 
+%     = \arg\min_{t \in \{1,\dots,N\}} \max_{i \in S} 
+%     M\big(I_i(x,y),\, G_i(x,y,t)\big).
+% \end{equation}
+% Because the feasible set contains only $N$ elements, the optimal solution can be obtained by a simple \textit{grid search} over candidate anchors.
+
+
+% \noindent \textbf{Toy example.} 
+% Consider a vertical bar moving horizontally at constant velocity $v$ during capture (Fig.~\ref{fig:rsdiagram}). Each RS row records the bar at a slightly different time, producing a slanted appearance. The distortion relative to a GS frame at $t_{\text{anch}}$ is:
+% \begin{equation}
+%     D = \int_{n=0}^{N} |v\, t_{\text{anch}} - v\, n|\, dn,
+% \end{equation}
+% where $n$ indexes rows and $N$ is the image height. Minimizing $D$ gives:
+% \begin{equation}
+%     t_{\text{anch}} = \frac{N}{2},
+% \end{equation}
+% i.e., the midpoint of the exposure, which intuitively minimizes the average spatial displacement.
+
+% % ============================================================
+% \subsection{Optimal Anchors for Datasets Under Symmetry Assumptions}
+
+% For many datasets, especially those captured in driving or robotics contexts, we can make simplifying assumptions on motion statistics.  
+% Let $X_n$ denote the horizontal position of a tracked structure in row $n$, modeled as
+% \begin{equation}
+%     X_n \sim \mathcal{N}(\mu_n,\, \sigma^2).
+% \end{equation}
+% Let the GS position at anchor $t$ be $v \cdot t$.  
+% Then the expected distortion is
+% \begin{equation}
+%     \mathbb{E}[D(t)] 
+%     = \sum_{n=1}^{N} \mathbb{E}\big[| X_n - v t |\big]
+%     \approx \sum_{n=1}^{N} |\mu_n - v t|.
+% \end{equation}
+
+% If the dataset is \textbf{temporally centered on average}, meaning $\mu_n = v n$, then
+% \begin{equation}
+%     \mathbb{E}[D(t)] \approx \sum_{n=1}^{N} | v n - v t |,
+% \end{equation}
+% which is minimized at the median of $\{1,\dots,N\}$:
+% \begin{equation}
+%     t_{\text{anch}} = \frac{N}{2}.
+% \end{equation}
+
+% \paragraph{Extension to acceleration.}
+% If rows include zero-mean accelerations:
+% \begin{equation}
+%     X_n = v n + \tfrac{1}{2} a_n n^2,\qquad a_n \sim \mathcal{N}(0, \sigma_a^2),
+% \end{equation}
+% the expectation remains centered at $v n$, so the optimum anchor remains $N/2$.
+
+
+% These points emphasize that anchor-point selection is a fundamental factor in RS correction. Our method primarily serves as a strong instantiation demonstrating these effects, while the dataset provides a controlled benchmark for systematic evaluation.
+
+% \noindent \textbf{Anchor points as a method-agnostic improvement.}
+% Anchor-point selection is not specific to our pipeline, but is implicitly present in all RS correction methods that map an RS image to a single GS reference. To demonstrate this, we revisited RS-Diffusion~\cite{RS-Diffusion}, which predicts a dense flow field that maps each RS row to a GS image. In its original formulation, the predicted flow is implicitly anchored to the first row of the image.
+
+% Without retraining or modifying the network, we re-centered the predicted flow so that the displacement is zero at the image midpoint rather than at the top row, effectively changing the anchor point from $t_{\text{anch}} = 0$ to $t_{\text{anch}} = \frac{N}{2}$. This simple post-processing step substantially improves reconstruction quality, seen in Fig. \ref{fig:RS-Diff}.
+
+% This result provides strong empirical evidence that anchor-point choice is a first-order factor in rolling shutter correction. Even state-of-the-art pretrained models benefit significantly from correct temporal alignment, highlighting anchor point selection as a paramount decision in dataset creation.

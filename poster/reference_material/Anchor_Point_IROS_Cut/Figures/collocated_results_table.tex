@@ -1,0 +1,68 @@
+
+% \begin{table*}[h]
+%   \caption{Comparisons of PSNR, SSIM, AbsRel, and $\delta_1$ on the testing dataset used in Sect. 5.2. Our fine-tuned, two-stage architecture (U-Net, Transformer) performs better on validation than any other combination of the architectures. Values that are not possible to record (intermediate RGB metrics for one-stage architecture) are represented with NA.}
+%   \centering
+%   \begin{tabular}{c c  c c  c c  }
+%     \hline
+%       \multirow{2}{*}{Architecture} & \multirow{2}{*}{Method} &  \multicolumn{2}{c}{Intermediate RGB} & \multicolumn{2}{c}{Depth Map}\\
+%      \cmidrule(lr){3-4} \cmidrule(lr){5-6} 
+%       &&PSNR &SSIM  & AbsRel & $\delta_1$\\
+%       \hline
+%     \multirow{3}{*}{One Stage} & \cite{Marigold} & NA  & NA~ &6.047 &0.743\\
+%     &\cite{DepthAnything}& NA &  NA & 0.655 & 0.243\\
+%     &\cite{ecodepth}&  &   & 0.655 & 0.243\\
+
+
+%     \hline
+%     \multirow{3}{*}{Comparisons} & \cite{RS-Diffusion} & 20.360 & 0.559 & 0.904& 0.810\\
+%     & \cite{RS-Homo} & 21.222 & 0.576 & 0.788& 0.554\\
+%     & \cite{Manhattan} & 17.900 & 0.489 & 0.621& 0.377\\
+    
+%     \hline
+%     \multirow{1}{*}{Parallel Two Stage}&\cite{Marigold}-\cite{Marigold} & 22.87  & 0.494  & 3.22 & 0.618\\
+%     \hline
+    
+%     \multirow{2}{*}{Orthogonal Two Stage}&\cite{Marigold}-\cite{ecodepth} & 22.87 & 0.494 & 6.48 & 0.917\\
+%     &Baseline \cite{Marigold}-\cite{DepthAnything} & 22.87  & 0.494 & 0.377 & 0.227\\
+%     \hline
+%     &\textbf{Fine Tuned (ours)}& 22.87  & 0.494 &\textbf{0.191} & \textbf{0.158}\\
+
+
+
+%     \hline
+%     %3.66, 2.8, 3.35
+%     %0.51, 1.32, 0.74
+%   \end{tabular}
+
+%   \label{table:collocated_orthogonal_table}
+% \end{table*}
+\begin{table*}[h!]
+  \caption{Comparisons of PSNR, SSIM, AbsRel, and $\delta_1$ on the testing dataset used in Sec. V-B. Our fine-tuned, two-stage architecture (U-Net, Transformer) performs better on validation than any other combination of the architectures. Values that are not possible to record (intermediate RGB metrics for one-stage architecture) are represented with NA. Comparisons of two-stage architectures with shared first stages will have repeated metrics for intermediate RGB. }
+  \centering
+  \setlength{\tabcolsep}{15pt} % default is usually 6pt
+  \begin{tabular}{l l c c c c}
+    \hline
+    \multirow{2}{*}{\textbf{Architecture}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{2}{c}{Intermediate RGB} & \multicolumn{2}{c}{Depth Map}\\
+    \cmidrule(lr){3-4} \cmidrule(lr){5-6}
+    & & PSNR $\uparrow$& SSIM $\uparrow$& AbsRel $\downarrow$& $\delta_1 \uparrow$\\
+    \hline
+    \multirow{3}{*}{One Stage} & Marigold\cite{Marigold} & NA & NA & 6.047 & 0.257\\
+    & Depth-Anything-V2\cite{DepthAnything} & NA & NA & 0.655 & 0.757\\
+    & Eco-Depth\cite{ecodepth} & NA & NA & 0.488 & 0.676\\
+    \hline
+    \multirow{4}{*}{Comparisons} & RS-Diff\cite{RS-Diffusion} & 19.47 & 0.433 & 0.904 & 0.190\\
+    &RS-Diff Fine-tuned\cite{RS-Diffusion} & 21.52 & 0.469 & 0.802 & 0.214\\
+    & Deep RS-HM\cite{RS-Homo} & 20.75 & 0.456 & 0.788 & 0.446\\
+    & Manhattan\cite{Manhattan} & 21.41 & 0.454 & 0.621 & 0.623\\
+    \hline
+    \multirow{1}{*}{Parallel Two Stage} & \cite{Marigold}-\cite{Marigold} & 22.87 & 0.494 & 3.22 & 0.382\\
+    \hline
+    \multirow{2}{*}{Orthogonal Two Stage} & \cite{Marigold}-\cite{ecodepth} & 22.87 & 0.494 & 0.506 & 0.649\\
+    & Baseline \cite{Marigold}-\cite{DepthAnything} & 22.87 & 0.494 & 0.377 & 0.773\\
+    \hline
+    & \textbf{Fine Tuned (ours)} & \textbf{22.87} & \textbf{0.494} & \textbf{0.191} & \textbf{0.842}\\
+    \hline
+  \end{tabular}
+  \label{table:collocated_orthogonal_table}
+  \vspace{-2mm}
+\end{table*}

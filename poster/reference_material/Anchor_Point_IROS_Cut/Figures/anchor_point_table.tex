@@ -1,0 +1,42 @@
+% \begin{table*}
+%   \caption{Comparisons of different anchor points with the first stage of our two stage architecture. Three separate anchor points were tested $t_a = 0, \frac{N}{4}, \frac{N}{2}$. The models were run on the single scene datasets, the modified X4K dataset, and a subset of the real world collocated dataset. These comparisons were done on the intermediate RGB images, and $t_a = \frac{N}{2}$ outperforms all other anchor points. }
+%   \centering
+%   \begin{tabular}{c c c c cc c  c c  c c }
+%     \hline
+%        \multirow{2}{*}{Anchor} & \multicolumn{2}{c}{Ceiling Fan} & \multicolumn{2}{c}{Table Fan}& \multicolumn{2}{c}{Plane} & \multicolumn{2}{c}{X4K} & \multicolumn{2}{c}{Collocated}\\
+
+%       &PSNR &SSIM&PSNR &SSIM&PSNR &SSIM & PSNR & SSIM & PSNR & SSIM \\
+%     \hline
+%       $t_a=0$& 34.93 & 0.971 & 26.82 & 0.831 & 24.21 & 0.808 &15.594 & 0.578 & 20.238 & 0.639\\
+%       $t_a=\frac{N}{4}$&&&&&&&  17.291 & \textbf{0.630} & 20.292 & 0.640\\
+%       $t_a=\frac{N}{2}$ & \textbf{36.21} & \textbf{0.986} & \textbf{27.57} & \textbf{0.842} & \textbf{25.02} & \textbf{0.841} & \textbf{17.733} & 0.629 & \textbf{21.778} & \textbf{0.674}\\
+
+
+
+%     \hline
+%     %3.66, 2.8, 3.35
+%     %0.51, 1.32, 0.74
+%   \end{tabular}
+
+%   \label{table:AnchorPoint}
+% \end{table*}
+
+\begin{table}[th!]
+  \caption{Comparisons of different anchor points with the first stage of our two-stage architecture on single-scene datasets (Ceiling Fan, Table Fan, Plane). The models were evaluated using PSNR and SSIM on intermediate RGB images. $t_a = \frac{N}{2}$ achieves the highest performance across all scenes.}
+  \centering
+  \setlength{\tabcolsep}{4pt} % tighten column spacing
+  \begin{tabular}{c c c c c c c}
+    \hline
+    \multirow{2}{*}{Anchor} & \multicolumn{2}{c}{Ceiling Fan} & \multicolumn{2}{c}{Table Fan} & \multicolumn{2}{c}{Plane} \\
+    & PSNR & SSIM & PSNR & SSIM & PSNR & SSIM \\
+    \hline
+    $t_a=0$ & 34.93 & 0.971 & 26.82 & 0.831 & 24.21 & 0.808 \\
+    $t_a=\frac{N}{2}$ & \textbf{36.21} & \textbf{0.986} & \textbf{27.57} & \textbf{0.842} & \textbf{25.02} & \textbf{0.841} \\
+    \hline
+  \end{tabular}
+  \label{table:AnchorPoint_single}
+  % \vspace{-3mm}
+\end{table}
+
+
+

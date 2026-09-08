@@ -1,0 +1,28 @@
+% \subsection{Anchor Points}
+
+\begin{figure}[t]
+    \centering
+    % First Row
+    \begin{minipage}{0.2\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{GlobalShutterSelection/center.drawio.png}
+        % \captionof{figure}{Rolling Shutter Image \(R_0\) where the corresponding Global Shutter image is at time \(t_0\)}
+
+    \end{minipage}
+    \begin{minipage}{0.2\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{GlobalShutterSelection/start.drawio.png}
+        % \captionof{figure}{Rolling Shutter Image \(R_{N/2}\) where the corresponding Global Shutter image is at time \(t_{N/2}\)}
+    \end{minipage}
+    \begin{minipage}{0.2\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{GlobalShutterSelection/gs.drawio.png}
+    \end{minipage}
+    \begin{minipage}{0.2\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{GlobalShutterSelection/angle_exclusion.png}
+
+    \end{minipage}
+    \caption{Example showing the importance of Anchor Points and our Angle of Exclusion. The top two images are rolling shutter images, and the bottom left is a corresponding global shutter image. The top left image is \(R_0\) where the global shutter image is taken at time slice \(t_0\) and the top right is \(R_{N/2}\) where the global shutter image is at time \(t_{N/2}\). While both are distorted, it's clear to see their differences when examining where each blade connects to their axis. The bottom right demonstrates our method of separating training/testing data in the single-view dataset. If the center of any of the fan blades are in the areas highlighted red, they are designated for testing. All other positions of the blades are included in training.}
+    \label{fig:selection}
+\end{figure}

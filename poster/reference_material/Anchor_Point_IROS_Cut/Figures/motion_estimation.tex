@@ -1,0 +1,27 @@
+\begin{figure}[h!]
+
+     % First Row
+     \centering
+    \begin{minipage}{0.11\textwidth}
+        \text{Input Image}
+        \centering
+        \includegraphics[width=\textwidth]{custom_anchor/image.png}
+    \end{minipage}
+    \begin{minipage}{0.11\textwidth}
+        \text{$t_a = 0$}
+        \centering
+        \includegraphics[width=\textwidth]{custom_anchor/0/image.png}
+    \end{minipage}
+    \begin{minipage}{0.11\textwidth}
+        \text{$t_a = 0.5\times N$}
+        \centering
+        \includegraphics[width=\textwidth]{custom_anchor/0.5/image.png}
+    \end{minipage}
+    \begin{minipage}{0.11\textwidth}
+        \text{$t_a = N$}
+        \centering
+        \includegraphics[width=\textwidth]{custom_anchor/1/image.png}
+    \end{minipage}
+    \caption{Visualizations of three of our models on an input image. The three models are a subset of the five we trained with anchor points: $t_a= 0, \frac{1}{2} N,$ and $N$. All three models were provided the same rolling-shutter image, and were able to produce quality results correlating to different instances of time.}
+    \label{fig:motion}
+\end{figure}

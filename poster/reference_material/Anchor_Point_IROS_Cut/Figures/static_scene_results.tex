@@ -1,0 +1,94 @@
+
+
+\begin{figure*}[!bh]
+    \centering
+
+    \includegraphics[width=\textwidth]{Results/SYNTH1.pdf}
+    \caption{
+    Results on SYN1 comparing RS-Diffusion \cite{RS-Diffusion}, Manhattan World \cite{Manhattan}, and our method under two anchor-point choices ($t_a=0$, $t_a=\frac{N}{2}$). PSNR curves show validation performance per anchor-point.
+    % Visualization off our of the models run on synthetic data (\textbf{SYN1}). Each column corresponds to a method, and each row to a scene (Fan, Plane). Each scene shows the input with two anchors ($t_a=0$ and $t_a=\frac{N}{2}$), compared against RS-Diffusion \cite{RS-Diffusion}, Manhattan World \cite{Manhattan}, our model outputs, and ground truth. The PSNR curves on the right show training performance over iterations for each scene. %\JI{This figure needs a lot of revision}
+    }
+    \label{fig:rotated_fig_sidepsnr}
+    \vspace{-4mm}
+\end{figure*}
+    % \begin{minipage}{0.6\textwidth} % LEFT: Images
+    %     %---------------- Header Row ----------------%
+    %     \hspace{.09\textwidth}
+    %     \begin{minipage}{0.16\textwidth}\centering\textbf{Input}\end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering\textbf{RS-D} \cite{RS-Diffusion}\end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering\textbf{MW} \cite{Manhattan}\end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering\textbf{Ours}\end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering\textbf{GT}\end{minipage}
+
+    %     \vspace{2mm}
+
+    %     %---------------- FAN EXTREME ----------------%
+    %     \begin{minipage}{0.02\textwidth}\rotatebox{90}{\textbf{Fan}}\end{minipage}
+    %     \hspace{0.01\textwidth}
+    %     \begin{minipage}{0.04\textwidth}
+    %         \centering
+    %         % \vspace{5mm}
+    %         \rotatebox{90}{\textcolor{red}{$t_a = 0$}}\\[3mm]
+    %         % \vspace{10mm}
+    %         \rotatebox{90}{\textcolor{green}{$t_a = \frac{N}{2}$}}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/extreme/fan_extreme/start/0000.png}\\
+    %         \includegraphics[width=\textwidth]{Results/extreme/fan_extreme/center/0000.png}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/RS-Diffusion/fs.jpg}\\
+    %         \includegraphics[width=\textwidth]{Results/RS-Diffusion/fc.jpg}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/manhattan/fs.png}\\
+    %         \includegraphics[width=\textwidth]{Results/manhattan/fc.png}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/extreme/fan_extreme/start/fan_extreme_test_RS0.8_START_0000.png}\\
+    %         \includegraphics[width=\textwidth]{Results/extreme/fan_extreme/center/0000_green.jpg}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/extreme/fan_extreme/0000.png}\\
+    %         \includegraphics[width=\textwidth]{Results/extreme/fan_extreme/0000.png}
+    %     \end{minipage}
+    %     \vspace{0mm}
+        
+    %     %---------------- PLANE EXTREME ----------------%
+    %     \begin{minipage}{0.02\textwidth}\rotatebox{90}{\textbf{Plane}}\end{minipage}
+    %     \hspace{0.01\textwidth}
+    %     \begin{minipage}{0.04\textwidth}
+    %         \centering
+    %         \vspace{5mm}
+    %         \rotatebox{90}{\textcolor{red}{$t_a = 0$}}\\[3mm]
+    %         % \vspace{13mm}
+    %         \rotatebox{90}{\textcolor{green}{$t_a = \frac{N}{2}$}}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/extreme/plane_extreme/start/0000.png}\\
+    %         \includegraphics[width=\textwidth]{Results/extreme/plane_extreme/center/0000.png}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/RS-Diffusion/ps.jpg}\\
+    %         \includegraphics[width=\textwidth]{Results/RS-Diffusion/pc.jpg}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/manhattan/ps.png}\\
+    %         \includegraphics[width=\textwidth]{Results/manhattan/pc.png}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/extreme/plane_extreme/start/0000_pred.png}\\
+    %         \includegraphics[width=\textwidth]{Results/extreme/plane_extreme/center/0000_pred_green.jpg}
+    %     \end{minipage}
+    %     \begin{minipage}{0.16\textwidth}\centering
+    %         \includegraphics[width=\textwidth]{Results/extreme/plane_extreme/0000.png}\\
+    %         \includegraphics[width=\textwidth]{Results/extreme/plane_extreme/0000.png}
+    %     \end{minipage}
+    % \end{minipage}%
+    % % \hfill
+    % \begin{minipage}{0.4\textwidth} % RIGHT: PSNR plots
+    %     \centering
+    %     \vspace{5mm}
+    %     \includegraphics[width=\textwidth]{Results/fan/fan_psnr.png}\\
+    %     \includegraphics[width=\textwidth]{Results/Plane/plane_psnr.png}
+    % \end{minipage}

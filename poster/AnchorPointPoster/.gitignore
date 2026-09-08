@@ -1,0 +1,13 @@
+# Web dev
+node_modules/
+dist/
+build/
+
+# Render artifacts (from `npm run export` / `npm run preview`)
+/poster.pdf
+/poster.png
+/preview.png
+
+# OS generated files
+.DS_Store
+Thumbs.db

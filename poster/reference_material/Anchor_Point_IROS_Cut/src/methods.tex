@@ -1,0 +1,86 @@
+
+
+\section{Methodology}
+\input{Figures/dataset_collage}
+\subsection{Dataset Creation and Analysis}
+
+To evaluate rolling shutter correction under large distortions, we provide three datasets containing paired RS and GS images. 
+
+% These datasets emphasize motion profiles and distortions commonly encountered in robotic systems, and provide explicit anchor-point control for systematic study.
+
+\vspace{1mm}
+\noindent \textbf{SYN1: Synthetic Benchmark.}  
+\textit{SYN1} contains RS–GS pairs rendered in Blender \cite{villar2021learning}. Each single-view scene (table fan, ceiling fan, propeller plane) includes two GS images for different anchor points and eight RS variants with increasing distortion, producing $(8 + 2)\times200 = 2000$ images per scene. 
+
+% Randomization in lighting, colors, and textures ensures appearance diversity. To prevent overfitting, we hold out specific blade orientations (15° intervals) for testing.
+
+\vspace{1mm}
+\noindent \textbf{SYN2: Realistic RS Simulation.}  
+\textit{SYN2} introduces realistic motions and textures while maintaining full control over RS effects. RS frames are synthesized from the high-speed X4K1000FPS dataset \cite{X4K} by row-wise stitching of consecutive GS frames. This method allows the selection of multiple anchor points for a single RS image.  The dataset includes \textbf{22{,}040} GS frames and \textbf{4{,}408} RS images, covering a variety of motions and scene types.
+
+% Each RS image corresponds to five GS frames, defining five anchor points per sequence.
+
+\noindent \textbf{REAL: Collocated RS-GS Capture.}
+\textit{REAL} is a real-world dataset captured using a \textbf{dual-camera collocated system} (Fig.~\ref{fig:camera}), where rolling-shutter and global-shutter cameras are beam-splitter-aligned and hardware-synchronized. Varying trigger delays provides explicit control of the anchor point, producing multiple RS-GS pairs per scene. The dataset contains ~40k image pairs at 300×300 resolution (20k outdoor, 10k indoor, 10k additional for anchor point ablation). Optical-flow analysis (Fig.~\ref{fig:flow_bar}) shows that \textbf{REAL} exhibits the largest motion among RS datasets, making it suitable for evaluating large-distortion RS correction and depth estimation. 
+
+% The system is attachable to a Puppy-Pi robot for legged-robot experiments
+\begin{figure}[t!]
+    \includegraphics[width=0.55\columnwidth]{Figures/camera_diagram.drawio.png}
+    \includegraphics[width=0.4\columnwidth]{Figures/ray_diagram.drawio.png}
+    \caption{Collocated RS–GS camera setup used for REAL. Hardware synchronization allows explicit control of anchor points for each capture. This device will be provided as a demo if accepted.}
+    \label{fig:camera}
+    \vspace{-2mm}
+\end{figure}
+
+\input{Figures/static_scene_results}
+
+
+
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=\columnwidth]{collage/Figure_1.png}%
+    \vspace{-2mm}
+    \caption{Optical-flow motion statistics for RS datasets. For our dataset, the percentage of pixels with greater than 2\%, 6\%, and 10\% flow was more than double that of the other datasets. \textbf{No other dataset matches our egocentric motion, allowing us to model legged robots and other mobile systems.}}
+    \label{fig:flow_bar}
+    \vspace{-2mm}
+\end{figure}
+
+
+
+
+
+\subsection{Integration of Vision Foundation Models}
+
+To address RS correction and monocular depth estimation, we leverage pre-existing vision foundation models (VFMs). Our pipeline consists of two sequential stages:
+
+
+
+
+\begin{enumerate}
+    \item \textbf{RS Correction Stage:} We adopt a Marigold U-Net~\cite{StableDiffusion} trained to map RS images to corresponding GS frames. The model operates on RGB images and focuses on removing row-wise distortions while preserving structure.
+    
+    \item \textbf{Monocular Depth Estimation Stage:} Corrected RS frames from the first stage are passed to a transformer-based Depth-Anything-V2~\cite{DepthAnything}. This stage produces dense depth maps, benefiting from the reduction in RS-induced geometric distortions. 
+\end{enumerate}
+\draft{Since metric depth ground truth is unavailable for the RS-GS datasets, we evaluate depth consistency relative to a frozen Depth-Anything-V2 teacher operating on the GS image. This measures preservation of geometric structure after RS correction rather than absolute metric depth accuracy. The teacher provides a consistent reference across all methods, isolating errors introduced by rolling shutter distortions.
+}
+
+\noindent \textbf{Pipeline Details.}  
+The stages are trained sequentially: first, the Marigold U-Net is trained for RS correction; second, the corrected outputs are used to  fine-tune the depth model. 
+
+% We experimented with different VFM configurations and found that sequentially applying two distinct VFMs yields better depth accuracy than either model alone. 
+
+\vspace{1mm}
+\noindent \textbf{Training Setup.}  
+Both stages are trained using our RS-GS paired datasets (\textbf{SYN1}, \textbf{SYN2}, \textbf{REAL}). Standard image augmentation is applied, and losses include MSE loss for RS correction and scale invariant loss for Depth-Anything-V2. 
+
+% All other architectural components (e.g., U-Net layers, transformer blocks) remain unchanged from the original VFMs, highlighting that improvements derive from task-specific training and anchor-point alignment.
+
+% \vspace{1mm}
+% \noindent \textbf{Purpose of VFM Integration.}  
+% We use Vision Foundation Models (VFMs) to leverage strong priors for RGB reconstruction and monocular depth estimation, allowing us to isolate and analyze rolling shutter distortions and anchor-point effects. Depth-Anything is employed as a second-stage evaluator to assess structural and geometric consistency of the corrected outputs, rather than focusing on high-frequency photometric artifacts. This enables evaluation of rolling shutter behavior at a geometric level relevant to depth estimation.
+
+\draft{\subsection{Comparisons and Baselines}
+All trainable baselines were fine-tuned on the training splits used by our method whenever training code and model weights were publicly available \cite{RS-Diffusion}. For methods whose temporal reference is fixed by design, results are reported using the authors' original formulation. Evaluation was performed on identical testing data. Baselines of the author's original implementations are included alongside fine-tuned implementations.
+}
+\input{Figures/collocated_results}

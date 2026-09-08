@@ -1,0 +1,100 @@
+ \documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{booktabs}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{makecell}
+\usepackage{enumitem}
+\usepackage{dblfloatfix}
+
+% Define the claim environment in the preamble
+\newtheorem{claim}{Claim}
+\newcommand{\draft}[1]{{\color{black}{#1}}}
+
+\newcommand\JI[1]{\textcolor{red}{JI: #1}}
+% Define the corollary environment, sharing the counter with 'claim'
+\newtheorem{corollary}{Corollary}[claim]
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\author{Jacob Carter, Vaishnav Ramesh, Md Jahidul Islam, and Sanjeev J. Koppal\textsuperscript{\textdagger}% <-this % stops a space
+% \thanks{*This work was not supported by any organization}% <-this % stops a space
+\thanks{All authors are affiliated with the Dept.~of Electrical and Computer Engineering, University of Florida, Gainesville, FL 32611, USA.
+E-mail: carterjacob@ufl.edu (corresponding author).}
+\thanks{\textsuperscript{\textdagger}
+Dr.~Sanjeev~J.~Koppal holds concurrent appointments as an Associate Professor of ECE at the University of Florida and as an Amazon Scholar at Amazon Robotics. This project was performed at the University of Florida and is not associated with Amazon Robotics.}% <-this % stops an unwanted space
+%
+}
+\begin{document}
+
+\title{\vspace{5mm}Anchor Points for Monocular Depth Estimation Under Severe Rolling Shutter Ego-motion%
+% \vspace{-15mm}
+}
+%\title{Anchor Points for Monocular Depth Estimation Under Severe Rolling Shutter Ego-motion}
+%\title{Monocular Depth from Rolling Shutter Distortions Induced by Ego-motion}
+
+
+
+%author{\IEEEauthorblockN{1\textsuperscript{st} Jacob Carter}
+% \IEEEauthorblockA{\textit{Electrical and Computer Engineering} \\
+% \textit{University of Florida}\\
+% Gainesville, United States \\
+% carterjacob@ufl.edu}
+% \and
+% \IEEEauthorblockN{2\textsuperscript{th} Sanjeev J. Koppal}
+% \IEEEauthorblockA{\textit{Electrical and Computer Engineering} \\
+% \textit{University of Florida}\\
+% Gainesville, United States \\
+% sjkoppal@ece.ufl.edu}
+% }
+
+% \twocolumn[{%
+% \renewcommand\twocolumn[1][]{#1}%
+% \maketitle
+%  \IEEEpeerreviewmaketitle
+% \begin{center}
+%     \input{Figures/teaser_results}
+% \end{center}%
+% }]
+
+
+\maketitle 
+
+\begin{figure*}
+    \input{Figures/teaser_results}
+\end{figure*}
+
+\input{src/abstract}
+\input{src/intro}
+\input{src/related_works}
+\input{src/anchor_point}
+\input{src/methods}
+\input{src/experiments}
+\input{src/conclusion}
+
+
+
+
+
+
+
+
+
+
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{main}
+
+\end{document}

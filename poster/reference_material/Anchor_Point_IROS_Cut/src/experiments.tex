@@ -1,0 +1,132 @@
+\section{Experimental Analyses}
+\label{sec:experiments}
+
+Our experiments were designed to validate the theoretical motivation for anchor points, evaluate VFMs on RSC, and analyze how different design choices affect rolling shutter correction and depth estimation quality. 
+
+\subsection{Anchor Points for Controlled Synthetic Scenes}
+
+We conduct single-scene experiments on the synthetic dataset \textbf{SYN1} to isolate the effect of anchor-point selection. Scenes exhibit rotation about the image center, suggesting an optimal anchor of $t_a=\frac{N}{2}$. Six diffusion models were trained across three scenes, comparing optimal ($t_a = \frac{N}{2}$) and suboptimal anchor points. Only models trained with the optimal anchor successfully corrected all three scenes, confirming our theoretical predictions (Fig.~\ref{fig:rotated_fig_sidepsnr}, Table \ref{table:AnchorPoint_single}). We further compare against Manhattan World~\cite{Manhattan} and RS-Diffusion~\cite{RS-Diffusion}, which struggle under extreme distortions.
+% We begin with controlled single-scene experiments to isolate the effect of anchor point selection. Diffusion models were trained on individual scenes from the synthetic dataset \textbf{SYN1}, where the axis of rotation is fixed at the image center, suggesting an optimal anchor point of $t_a = \frac{N}{2}$.
+
+
+
+% We further compared our pipeline with \textbf{Manhattan World}~\cite{Manhattan} and \textbf{RS-Diffusion}~\cite{RS-Diffusion}. These general-purpose methods struggle with the extreme distortions in SYN1, whereas our VFM pipeline preserves structure and continuity.
+\input{Figures/anchor_point_table}
+
+\input{Figures/collocated_results_table}
+
+
+\subsection{Anchor Points in General Realistic Scenes}
+Next, we evaluated the full two-stage pipeline, RS correction followed by monocular depth estimation. 
+
+\vspace{1mm}
+\noindent \textbf{Synthetic Results.}  
+On the X4K-based dataset~\cite{X4K}, we trained models using different anchor-point choices spanning the exposure window. Performance consistently peaked near the temporal midpoint, with $t_a=\frac{N}{2}$ yielding the highest PSNR across training (Fig.~\ref{fig:PSNR_X4K}). Visual comparisons show cleaner reconstructions and more consistent depth than prior RS correction methods (Fig.~\ref{fig:collocated_results}).
+
+
+
+\vspace{1mm}
+\noindent \textbf{Real-World Results.}  
+On the novel \textbf{REAL} dataset, our pipeline consistently outperformed baseline RS correction models and Depth-Anything-V2 in both RGB fidelity and depth accuracy (Table~\ref{table:collocated_orthogonal_table}). PSNR improvements are most pronounced in high-motion sequences, demonstrating robustness to large RS distortions (Fig.~\ref{fig:flow_vs_perf}). 
+
+\begin{figure}[b!]
+    \centering
+    \includegraphics[width=0.9\columnwidth, trim={0cm 0.5cm 0cm 1.5cm}]{collage/psnr_bin_line_vs_flow_zoomed.png}%
+    % \vspace{-2mm}
+    \caption{Relative performance of our model vs. RS-Diffusion across optical flow magnitudes. Each bin represents the percentage of images where our model achieves higher PSNR.}
+    \label{fig:flow_vs_perf}
+    \vspace{-1mm}
+\end{figure}
+
+
+\input{Figures/X4K_PSNR}
+
+
+
+
+
+
+
+
+
+\begin{table}[t!]
+\vspace{1mm}
+  \caption{Comparisons of anchor points with the first stage of our architecture on \textbf{SYN2} and \textbf{REAL}. These comparisons were conducted on the intermediate RGB images, and $t_a = \frac{N}{2}$ consistently achieves the best or comparable performance.}
+  \centering
+  \begin{tabular}{c c c c c}
+    \hline
+    \multirow{2}{*}{Anchor} & \multicolumn{2}{c}{X4K} & \multicolumn{2}{c}{Collocated} \\
+    & PSNR & SSIM & PSNR & SSIM \\
+    \hline
+    $t_a=0$ & 15.594 & 0.578 & 20.238 & 0.639 \\
+    $t_a=\frac{N}{4}$ & 17.291 & \textbf{0.630} & 20.292 & 0.640 \\
+    $t_a=\frac{N}{2}$ & \textbf{17.733} & 0.629 & \textbf{21.778} & \textbf{0.674} \\
+    \hline
+  \end{tabular}
+  \label{table:AnchorPoint_multi}
+  \vspace{-4mm}
+\end{table}
+
+
+
+
+\subsection{Ablation Study: Model Configuration}
+We evaluated three configurations: \textbf{one-stage}, \textbf{parallel two-stage}, and \textbf{orthogonal two-stage} (Table~\ref{table:collocated_orthogonal_table}). 
+\textbf{One-stage} models (Marigold~\cite{StableDiffusion}, Depth-Anything~\cite{DepthAnything}, EcoDepth~\cite{ecodepth}) jointly learn de-rolling and depth but struggle with structural consistency. \textbf{Parallel two-stage} models decouple the tasks sequentially using identical architectures; this improves stability but provides limited gains. 
+\textbf{Orthogonal two-stage} models combine distinct architectures (Marigold U-Net for de-rolling and Depth-Anything-V2 for depth) and achieve the highest PSNR, SSIM, AbsRel, and $\delta_1$. Even untuned orthogonal baselines outperform parallel two-stage designs, indicating that sequential specialization of tasks is a pivotal factor behind performance improvements. Fine-tuning further improves results, confirming that the pipeline effectively leverages VFMs for RSC and Monocular Depth Estimation.
+
+\draft{The effects of anchor-point selection and architecture choice were studied independently. Table II isolates anchor-point selection while holding the underlying network architecture fixed. Table III evaluates different architectural configurations while using the optimal anchor point identified in Table II. The results indicate that both factors contribute to performance. Anchor-point selection consistently improves photometric reconstruction quality, while architectural specialization further improves downstream depth estimation metrics.}
+
+% \draft{Because depth estimation is applied to the output of the RS correction stage, and because improvements in PSNR/SSIM consistently correlated with improvements in AbsRel and $\delta1$ throughout our experiments, we performed anchor-point ablations using the intermediate RGB reconstruction metrics. This isolates the effect of anchor-point selection while avoiding confounding effects from retraining multiple downstream depth networks.}
+
+
+\subsection{Ablation Study: Anchor Points in Other RSC Algorithms}
+We evaluated RS-Diffusion~\cite{RS-Diffusion} across a sweep of anchor points and found that centering the predicted flow at the temporal midpoint ($t_{\text{anch}} = \frac{N}{2}$) consistently yields the best reconstruction on synthetic and real RS images. \draft{RS-Diffusion was chosen for ablation due to its ability to change predicted flow easily without retraining.} This confirms that mid-exposure alignment improves performance across different RSC methods without retraining, highlighting the generality of the anchor-point insight (Fig. \ref{fig:teaser_results}).
+
+
+
+\begin{table}[t!]
+    \centering
+    \caption{Depth estimation performance in a legged robot scenario comparing the rolling shutter depth against our method. AbsRel and $\delta_1$ are averaged over $1500$ images collected across three outdoor locations.}
+    \setlength{\tabcolsep}{12pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lcc}
+        \toprule
+        Method & absRel $\downarrow$ & $\delta_1 \uparrow$ \\
+        \midrule
+        Raw RS Image & 0.112 & 0.895 \\
+        Our Algorithm & \textbf{0.096} & \textbf{0.903} \\
+        \bottomrule
+    \end{tabular}
+
+    \label{tab:puppy_pi}
+\end{table}
+
+
+
+
+\subsection{Effectiveness on Legged Robots}
+
+% Legged robots are subject to rapid and irregular motion. Because RS cameras expose image rows sequentially, abrupt accelerations and rotations induce geometric warping that degrades depth estimation. As shown in Fig.~\ref{Fig:puppy_pi_qual}, the RS depth maps exhibit visible distortions that can negatively impact downstream perception and planning.
+
+To evaluate our method in this real-world setting, we collected $1500$ images across three outdoor locations using the collocated sensor system mounted on Puppy-Pi. Runtime measurements were performed on an NVIDIA RTX A6000 GPU using FP16 inference at a resolution of $300\times300$. To improve deployment efficiency, the diffusion model was accelerated by reducing the number of denoising steps from $50$ to $10$, reducing the average inference time from $2850$~ms to $349$~ms.
+
+As shown in Table~\ref{tab:puppy_pi}, our method reduces AbsRel by $14.3\%$ and improves $\delta_1$ accuracy by $0.9\%$ over raw RS input without additional fine-tuning beyond training on the REAL dataset. The qualitative results in Fig.~\ref{Fig:puppy_pi_qual} are consistent with these improvements, where rolling shutter--induced warping is visibly mitigated. While the proposed pipeline demonstrates promising low-latency performance, deployment at higher image resolutions or alongside additional perception tasks presents a natural computational trade-off due to increased diffusion and image-processing costs. Improving scalability through more efficient diffusion strategies, model compression, or shared-backbone architectures remains an important direction for future work.
+
+\input{Figures/puppy-pi-table}
+
+%mention number of images/ Scene where rolling shutter is more pronounced, Add rolling shutter output in  image.
+% To validate the applicability of our method to mobile robotics, a test dataset was captured with the co-located system attached to Puppy-Pi. The model, using the same weights as the one trained on the co-located dataset, was modified through floating-point changes (32 to 16) and denoise steps (50 to 10) to drastically reduce runtime. These changes reduce average runtime on the pipeline from 2850ms to 349ms, providing a close to real time pipeline for inference. Highlighted visualizations and metrics from data captured on puppy-pi and model output can be seen in Fig. \ref{fig:puppy}.
+% \subsection{Ablation Study: Anchor Points}
+
+% Finally, we evaluated the impact of anchor points across synthetic (\textbf{SYN2}) and real-world (\textbf{REAL}) datasets. For SYN2, we trained models with anchor points $t_a = 0, \frac{1}{4}N, \frac{1}{2}N, \frac{3}{4}N, N$, using identical RS inputs. PSNR and SSIM consistently improved as the anchor approached the midpoint, confirming the theoretical prediction (Fig.~\ref{fig:PSNR_X4K}).  
+
+% In REAL, each anchor corresponds to a distinct capture, introducing natural variation. Models trained near the temporal midpoint again achieved higher PSNR and SSIM, demonstrating that the anchor-point formulation generalizes to real-world scenes. These results emphasize the importance of temporal alignment in RS-GS correction, independent of the specific architectures used.
+
+% \noindent \textbf{Effect of Anchor Point on RS-Diffusion.} 
+
+
+%\JI{What did we learn and where are the closing paragraph}
+
+
+% \JI{Missing conclusion section}
