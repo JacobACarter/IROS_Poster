@@ -45,8 +45,8 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0 6mm;
-  font-size: 0.58em;
-  line-height: 1.26;
+  font-size: 0.54em;
+  line-height: 1.24;
   color: var(--text-2);
 }
 </style>

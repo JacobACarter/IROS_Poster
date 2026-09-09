@@ -95,7 +95,10 @@ const MIME = {
 };
 
 console.log(`▸ Rendering ${formats.map((f) => f.toUpperCase()).join(" + ")}…`);
-const browser = await puppeteer.launch({ headless: true });
+const browser = await puppeteer.launch({
+  headless: true,
+  args: process.getuid?.() === 0 ? ["--no-sandbox", "--disable-setuid-sandbox"] : [],
+});
 try {
   const page = await browser.newPage();
 

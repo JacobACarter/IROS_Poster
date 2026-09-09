@@ -9,12 +9,12 @@ const { accent = "currentColor" } = defineProps<{ accent?: string }>();
     <div class="flow">
       <div class="io">RS Image</div>
       <div class="arrow">&#8594;</div>
-      <div class="stage">
+      <div class="pipeline-stage">
         <h5>Stage 1 &middot; Marigold U-Net</h5>
         <p class="role">RS correction</p>
       </div>
       <div class="arrow">&#8594;</div>
-      <div class="stage">
+      <div class="pipeline-stage">
         <h5>Stage 2 &middot; Depth-Anything-V2</h5>
         <p class="role">Depth estimation</p>
       </div>
@@ -63,20 +63,20 @@ const { accent = "currentColor" } = defineProps<{ accent?: string }>();
   color: var(--accent);
   line-height: 0.4;
 }
-.stage {
+.pipeline-stage {
   background: var(--paper-3);
   outline: 0.5mm solid var(--accent);
   border-radius: 4mm;
   padding: 1.2mm 3mm;
   text-align: center;
 }
-.stage h5 {
+.pipeline-stage h5 {
   margin: 0;
   font-size: 0.44em;
   line-height: 1.15;
   color: var(--accent);
 }
-.stage p.role {
+.pipeline-stage p.role {
   margin: 0.3mm 0 0 0;
   font-size: 0.38em;
   font-weight: 500;
